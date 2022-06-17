@@ -4,34 +4,54 @@ import './App.css'
 
 
 function App() {
+  const {register, handleSubmit, setValue, setFocus} = useForm();
+
+  const onSubmit = (e) => {
+    console.log(e);
+  }
+
+  const checkCEP = (e) => {
+    const cep = e.target.value.replace(/\D/g, ''); 
+    console.log(cep);
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      setValue('address', data.logradouro);
+      setValue('neighbourhood', data.bairro);
+      setValue('city', data.localidade);
+      setValue('uf', data.uf);
+      setValue('addressNumber');
+    });
+  };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <label>
         CEP:
-        <input type="text" />
+        <input type="text" {...register("cep")} onBlur={checkCEP}/>
       </label>
       <label>
         Rua:
-        <input type="text" />
+        <input type="text" {...register("address")}/>
       </label>
       <label>
         Numero:
-        <input type="text" />
+        <input type="text" {...register("addressNumber")}/>
       </label>
       <label>
         Bairro:
-        <input type="text" />
+        <input type="text" {...register("neighbourhood")}/>
       </label>
       <label>
         Cidade:
-        <input type="text" />
+        <input type="text" {...register("city")}/>
       </label>
       <label>
         Estado:
-        <input type="text" />
+        <input type="text" {...register("uf")}/>
       </label>
-      <button>Enviar</button>
+      <button type="submit">Enviar</button>
     </form>
   )
 }
